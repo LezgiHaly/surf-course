@@ -1,5 +1,5 @@
 
-
+// Класс товара
 class Product  {
   final int id;
   final String category;
@@ -14,15 +14,15 @@ class Product  {
     return "$id $category $name $price рублей $quantity шт. \n";
   }
  
-  
-}
+  }
 
-
+// интерфейс 
 abstract class Filter {
-   apply (List<Product> products) { 
-  } 
+
+   bool apply(Product products);
 }
 
+// фильтрация по категорям
 class CategoryFilter implements Filter{
 
   final String category;
@@ -30,12 +30,12 @@ class CategoryFilter implements Filter{
   CategoryFilter (this.category);
   
   @override
-  List<Product> apply(List<Product> products) {
-    return products.where((e) => e.category == category).toList();
+  bool apply(Product products) {
+    return products.category == category;
   }
 }
 
-
+// фильрация по цене
 class PriceFilter implements Filter {
 
   final int price;
@@ -43,27 +43,27 @@ class PriceFilter implements Filter {
   PriceFilter (this.price);
 
   @override
-  apply(List<Product> products) {
-
-   return products.where((e) => e.price <= price).toList();
-    
+   bool apply(Product products) {
+    return products.price <= price;
   }
 
 }
 
-
+// фильтрация по количеству на складе 
 class QuantityFilter implements Filter {
 
   final int quantity;
-
-
   QuantityFilter(this.quantity);
-  
-  @override
-  apply(List<Product> products) {
-   return products.where((e) => e.quantity < quantity).toList();
+    @override
+  bool apply(Product products) {
+   return products.quantity < quantity;
   }
+}
 
+// фильтрация списка
+ void applyFilter(List<Product> products, Filter filter) {
+  final filteredProducts = products.where((e) => filter.apply(e));
+  print(filteredProducts);
 }
 
 
@@ -78,18 +78,10 @@ void main () {
    Product(6, 'вода', 'Бородинский', 500, 5),
   ];
 
-  applyFilter (List list, Filter filter) {
- return filter.apply(products);
-}
+applyFilter(products, CategoryFilter('вода'));
 
-final resultCategory = applyFilter(products, CategoryFilter('вода'));
+applyFilter(products, PriceFilter(25));
 
-print(resultCategory);
-
-final resultPrice = applyFilter(products, PriceFilter(25));
-print(resultPrice);
-
-final resultQuantity = applyFilter(products, QuantityFilter(50));
-print(resultQuantity);
+applyFilter(products, QuantityFilter(50));
 
 }
